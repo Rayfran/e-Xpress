@@ -1,0 +1,7 @@
+{
+  "name": "e-Xpress MVP - Mercado, Serviços e Logística",
+  "description": "Uma plataforma híbrida que unifica marketplace de produtos, contratação de serviços e gestão logística com IA.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
