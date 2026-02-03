@@ -168,8 +168,8 @@ app.post('/api/redefinir-senha', async (req, res) => {
 });
 
 // --- ROTA CORINGA PARA O FRONTEND ---
-// Esta rota deve ser a ÚLTIMA. Ela envia o index.html para qualquer rota não definida acima.
-app.get('*', (req, res) => {
+// Garanta que esta seja a ÚLTIMA rota do arquivo
+app.get(/^\/(?!api).*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
