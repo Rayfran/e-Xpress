@@ -36,7 +36,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
 
         if (view === 'forgot') {
             try {
-                const response = await fetch('http://localhost:5000/api/recuperar-senha', {
+                const response = await fetch('https://e-xpress.onrender.com/api/recuperar-senha', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email })
@@ -61,7 +61,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/redefinir-senha', {
+                const response = await fetch('https://e-xpress.onrender.com/api/redefinir-senha', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token, novaSenha: password })
@@ -90,7 +90,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin }) => {
             : { nome: name, email, senha: password };
 
         try {
-            const response = await fetch(`http://localhost:5000${endpoint}`, {
+            const response = await fetch(`https://e-xpress.onrender.com${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
