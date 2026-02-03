@@ -4,12 +4,22 @@ import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import pool from './database.js';
+import path from 'path'; // Adicionado para gerenciar caminhos de arquivos
+import { fileURLToPath } from 'url'; // Adicionado para converter URLs de módulos
 
 dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+// --- INÍCIO DA CONFIGURAÇÃO PARA DEPLOY ---
+// 1. Serve os arquivos estáticos da pasta 'dist' (Frontend)
+app.use(express.static(path.join(__dirname, 'dist')));
+// --- FIM DA CONFIGURAÇÃO PARA DEPLOY ---
 
 // Inicialização das tabelas no PostgreSQL (Supabase)
 const initDB = async () => {
@@ -100,7 +110,12 @@ app.post('/api/recuperar-senha', async (req, res) => {
             [token, expira, email]
         );
 
-        const link = `http://localhost:3000/redefinir-senha?token=${token}`;
+        // Ajuste automático do link para produção ou local
+        const domain = process.env.NODE_ENV === 'production'
+            ? 'https://e-xpress.onrender.com'
+            : 'http://localhost:3000';
+
+        const link = `${domain}/redefinir-senha?token=${token}`;
 
         const mailOptions = {
             from: `e-Xpress <${process.env.EMAIL_USER}>`,
@@ -120,12 +135,6 @@ app.post('/api/recuperar-senha', async (req, res) => {
         transporter.sendMail(mailOptions, (mailErr) => {
             if (mailErr) {
                 console.error("ERRO AO ENVIAR E-MAIL:", mailErr.message);
-                if (process.env.NODE_ENV === 'development') {
-                    return res.status(200).json({
-                        mensagem: "E-mail não pôde ser enviado, mas o link foi gerado no terminal para teste.",
-                        devLink: link
-                    });
-                }
                 return res.status(500).json({ mensagem: "Erro ao enviar o e-mail de recuperação." });
             }
             res.status(200).json({ mensagem: "Link de recuperação enviado para o e-mail informado!" });
@@ -156,6 +165,12 @@ app.post('/api/redefinir-senha', async (req, res) => {
     } catch (err) {
         res.status(500).json({ mensagem: "Erro no banco: " + err.message });
     }
+});
+
+// --- ROTA CORINGA PARA O FRONTEND ---
+// Esta rota deve ser a ÚLTIMA. Ela envia o index.html para qualquer rota não definida acima.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
