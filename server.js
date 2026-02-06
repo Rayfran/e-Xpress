@@ -3,6 +3,13 @@ import cors from 'cors';
 import nodemailer from 'nodemailer';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import dns from 'dns';
+
+// Força o Node.js a priorizar IPv4 (evita erro ENETUNREACH com IPv6 do Supabase)
+if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder('ipv4first');
+}
+
 import pool from './database.js';
 import path from 'path'; // Adicionado para gerenciar caminhos de arquivos
 import { fileURLToPath } from 'url'; // Adicionado para converter URLs de módulos
